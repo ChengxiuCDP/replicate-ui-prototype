@@ -1,0 +1,4 @@
+interface:
+  display_name: Replicate UI Prototype
+  short_description: Build interactive HTML prototypes before UI implementation
+  default_prompt: "Use this skill for UI layout or information-architecture changes: inspect the existing component and design tokens, create a faithful interactive HTML prototype, validate it, and only then translate the approved design back into components."

@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>UI prototype review</title>
+    <style>
+      :root {
+        color-scheme: light;
+        --background: #f6f4ef;
+        --foreground: #20221f;
+        --muted: #e8e5dd;
+        --muted-foreground: #62655e;
+        --accent: #a34b2a;
+        --ring: #2d6cdf;
+        --radius: 14px;
+        font-family: Inter, ui-sans-serif, system-ui, -apple-system, sans-serif;
+      }
+      :root[data-theme="dark"] {
+        color-scheme: dark;
+        --background: #20211f;
+        --foreground: #f6f4ef;
+        --muted: #30322f;
+        --muted-foreground: #b5b6ad;
+        --accent: #f0a27d;
+        --ring: #8cb4ff;
+      }
+      * { box-sizing: border-box; }
+      body { margin: 0; min-width: 320px; background: var(--background); color: var(--foreground); }
+      a { color: inherit; }
+      button, a { font: inherit; }
+      button:focus-visible, a:focus-visible { outline: 3px solid var(--ring); outline-offset: 3px; }
+      .frame { width: min(1120px, calc(100% - 40px)); margin: 0 auto; padding: 32px 0 64px; }
+      .topbar { display: flex; justify-content: space-between; gap: 16px; align-items: center; }
+      .eyebrow { color: var(--accent); font-size: 12px; letter-spacing: .12em; text-transform: uppercase; }
+      .theme { border: 1px solid color-mix(in srgb, var(--foreground) 22%, transparent); border-radius: 999px; background: transparent; color: inherit; padding: 8px 12px; cursor: pointer; }
+      .hero { padding: 88px 0 56px; border-bottom: 1px solid color-mix(in srgb, var(--foreground) 18%, transparent); }
+      h1 { max-width: 760px; margin: 0; font-size: clamp(42px, 8vw, 92px); line-height: .95; letter-spacing: -.055em; font-weight: 600; }
+      .lede { max-width: 620px; margin: 24px 0 0; color: var(--muted-foreground); font-size: 18px; line-height: 1.6; }
+      .tabs { display: flex; gap: 8px; margin: 32px 0 20px; flex-wrap: wrap; }
+      .tab { border: 1px solid color-mix(in srgb, var(--foreground) 20%, transparent); border-radius: 999px; background: transparent; color: inherit; padding: 8px 14px; cursor: pointer; }
+      .tab[aria-selected="true"] { background: var(--foreground); color: var(--background); }
+      .panel[hidden] { display: none; }
+      .grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+      .card { min-height: 180px; border-radius: var(--radius); background: var(--muted); padding: 22px; }
+      .card h2 { margin: 0; font-size: 20px; }
+      .card p { margin: 10px 0 0; color: var(--muted-foreground); line-height: 1.5; }
+      @media (max-width: 720px) {
+        .frame { width: min(100% - 28px, 560px); padding-top: 20px; }
+        .hero { padding: 64px 0 40px; }
+        .grid { grid-template-columns: 1fr; }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        *, *::before, *::after { scroll-behavior: auto !important; transition-duration: .001ms !important; animation-duration: .001ms !important; animation-iteration-count: 1 !important; }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="frame">
+      <header class="topbar">
+        <span class="eyebrow">UI prototype review</span>
+        <button class="theme" type="button" id="theme-toggle" aria-label="Switch color theme">Dark mode</button>
+      </header>
+      <main>
+        <section class="hero" data-slot="hero">
+          <h1 data-slot="headline">A clear visual direction before implementation.</h1>
+          <p class="lede" data-slot="summary">Replace this copy with the user's real content after the structure is approved.</p>
+        </section>
+        <nav class="tabs" aria-label="Prototype directions" role="tablist">
+          <button class="tab" type="button" role="tab" aria-selected="true" aria-controls="direction-a" id="tab-a">Direction A</button>
+          <button class="tab" type="button" role="tab" aria-selected="false" aria-controls="direction-b" id="tab-b" tabindex="-1">Direction B</button>
+          <button class="tab" type="button" role="tab" aria-selected="false" aria-controls="direction-c" id="tab-c" tabindex="-1">Direction C</button>
+        </nav>
+        <section id="direction-a" class="panel" role="tabpanel" aria-labelledby="tab-a">
+          <div class="grid" data-slot="direction-a-content">
+            <article class="card"><h2 data-slot="card-title">Primary content</h2><p data-slot="card-summary">Use real names and evidence from the target interface.</p></article>
+            <article class="card"><h2>Secondary content</h2><p>Keep the hierarchy legible when the viewport narrows.</p></article>
+            <article class="card"><h2>Next action</h2><p>Record the decision that should map back to production code.</p></article>
+          </div>
+        </section>
+        <section id="direction-b" class="panel" role="tabpanel" aria-labelledby="tab-b" hidden>
+          <div class="grid"><article class="card"><h2>Alternative structure</h2><p>Change the information order, not only the decoration.</p></article></div>
+        </section>
+        <section id="direction-c" class="panel" role="tabpanel" aria-labelledby="tab-c" hidden>
+          <div class="grid"><article class="card"><h2>Third structure</h2><p>Use only when the brief is still open to a different direction.</p></article></div>
+        </section>
+      </main>
+    </div>
+    <script>
+      const root = document.documentElement;
+      const themeButton = document.querySelector('#theme-toggle');
+      themeButton.addEventListener('click', () => {
+        const dark = root.dataset.theme !== 'dark';
+        root.dataset.theme = dark ? 'dark' : 'light';
+        themeButton.textContent = dark ? 'Light mode' : 'Dark mode';
+      });
+      const tabs = [...document.querySelectorAll('[role="tab"]')];
+      const selectTab = (next) => tabs.forEach((tab, index) => {
+        const selected = index === next;
+        tab.setAttribute('aria-selected', String(selected));
+        tab.tabIndex = selected ? 0 : -1;
+        document.getElementById(tab.getAttribute('aria-controls')).hidden = !selected;
+      });
+      tabs.forEach((tab, index) => {
+        tab.addEventListener('click', () => selectTab(index));
+        tab.addEventListener('keydown', (event) => {
+          if (event.key === 'ArrowRight') { const next = (index + 1) % tabs.length; selectTab(next); tabs[next].focus(); }
+          if (event.key === 'ArrowLeft') { const next = (index - 1 + tabs.length) % tabs.length; selectTab(next); tabs[next].focus(); }
+        });
+      });
+    </script>
+  </body>
+</html>
